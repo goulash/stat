@@ -8,10 +8,10 @@ Package stat provides functions and data structures for statistics.
 
 There are several sub-packages:
 
- * test
- * dist
- * util
+ * [dist](https://godoc.org/github.com/goulash/stat/dist)
+ * [test](https://godoc.org/github.com/goulash/stat/test)
+ * [util](https://godoc.org/github.com/goulash/stat/util)
 
-For more information, see the documentation! :-)
+For more information, see the [documentation](https://godoc.org/github.com/goulash/stat)! :-)
 
 This package is licensed under the MIT license.
