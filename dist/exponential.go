@@ -16,7 +16,7 @@ type Exponential struct {
 	lambda float64
 }
 
-func NewExponential(lambda float64, s rand.Source) *Exponential {
+func NewExponential(s rand.Source, lambda float64) *Exponential {
 	if lambda <= 0 || s == nil {
 		panic("lambda must be positive")
 	}
@@ -29,8 +29,7 @@ func (e Exponential) String() string {
 }
 
 func (e Exponential) Float64() float64 {
-	// Inversion method works here.
-	return e.Q(e.r.Float64())
+	return e.r.ExpFloat64() / e.lambda
 }
 
 func (e Exponential) P(x float64) float64 {

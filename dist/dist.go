@@ -5,8 +5,6 @@
 // Package dist provides statistical probability distributions for random variables.
 package dist
 
-import "github.com/goulash/stat"
-
 // Nabbed these from math...
 const (
 	NaN    = 0x7FF8000000000001
@@ -14,12 +12,17 @@ const (
 	NegInf = 0xFFF0000000000000
 )
 
+type Discrete interface {
+	Int63() int64
+}
+
+type Continuous interface {
+	Float64() float64
+}
+
 type DistP interface {
 	// Name of the distribution
 	String() string
-
-	// Float64 returns a random value from the distribution.
-	Float64() float64
 
 	// P returns the probability that a value from the distribution is less than x.
 	// That is, P represents the cumulative probability function of the distribution.
@@ -41,15 +44,4 @@ func PDF(d DistP, a, b float64) (p float64) {
 		return -1
 	}
 	return d.P(b) - d.P(a)
-}
-
-func GenSeries(d DistP, n int) stat.Series {
-	if n <= 0 {
-		return nil
-	}
-	s := make(stat.Series, n)
-	for i := range s {
-		s[i] = d.Float64()
-	}
-	return s
 }

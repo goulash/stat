@@ -16,7 +16,7 @@ type Uniform struct {
 	b float64
 }
 
-func NewUniform(a, b float64, s rand.Source) *Uniform {
+func NewUniform(s rand.Source, a, b float64) *Uniform {
 	if a == b || s == nil {
 		panic("invalid input")
 	} else if b < a {
