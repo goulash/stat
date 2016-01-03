@@ -15,7 +15,7 @@ import (
 
 	"github.com/goulash/stat"
 	"github.com/goulash/stat/dist"
-	"github.com/goulash/stat/util"
+	"github.com/goulash/stat/statutil"
 )
 
 // ChiSquaredTest performs a statistical test on the given series.
@@ -45,7 +45,7 @@ func ChiSquaredTest(s stat.Series, d dist.Dist, k int, alpha float64) (ok bool, 
 	return chi2 < ChiSquared.Value(float64(k-1), alpha), chi2
 }
 
-var ChiSquared = util.NewApproxTable(
+var ChiSquared = statutil.NewApproxTable(
 	[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 40, 50, 60, 70, 80, 90, 100},
 	[]float64{0.995, 0.99, 0.975, 0.95, 0.90, 0.10, 0.05, 0.025, 0.01, 0.005},
 	[][]float64{
