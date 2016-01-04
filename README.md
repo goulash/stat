@@ -10,7 +10,7 @@ There are several sub-packages:
 
  * [dist](https://godoc.org/github.com/goulash/stat/dist)
  * [test](https://godoc.org/github.com/goulash/stat/test)
- * [util](https://godoc.org/github.com/goulash/stat/util)
+ * [statutil](https://godoc.org/github.com/goulash/stat/statutil)
 
 For more information, see the [documentation](https://godoc.org/github.com/goulash/stat)! :-)
 
