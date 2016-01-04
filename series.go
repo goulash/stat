@@ -8,7 +8,6 @@ package stat
 import (
 	"bufio"
 	"bytes"
-	"fmt"
 	"math"
 	"os"
 	"sort"
@@ -22,12 +21,14 @@ func (s *Series) Reset()              { *s = make(Series, 0) }
 func (s *Series) Append(f ...float64) { *s = append(*s, f...) }
 func (s *Series) Append1(f float64)   { *s = append(*s, f) }
 
+// Copy returns a copy of the series s.
 func (s Series) Copy() Series {
 	t := make(Series, len(s))
-	copy(s, t)
+	copy(t, s)
 	return t
 }
 
+// WriteFile writes the series to a file, where each number is on its own line.
 func (s Series) WriteFile(path string) error {
 	f, err := os.Create(path)
 	if err != nil {
@@ -38,15 +39,23 @@ func (s Series) WriteFile(path string) error {
 	buf := bufio.NewWriter(f)
 	defer buf.Flush()
 	for _, f := range s {
-		// TODO: it's probably better to do this with strconv
-		_, err := buf.WriteString(fmt.Sprintf("%f\n", f))
-		if err != nil {
+		if _, err := buf.WriteString(strconv.FormatFloat(f, 'f', -1, 64)); err != nil {
+			return err
+		}
+		if _, err := buf.WriteRune('\n'); err != nil {
 			return err
 		}
 	}
 	return err
 }
 
+// String returns the string representation of a series.
+//
+// Example:
+//
+//  // Prints: [1 2 3 4 5]
+//  fmt.Println(Series{1, 2, 3, 4, 5})
+//
 func (s Series) String() string {
 	if len(s) == 0 {
 		return "[]"
@@ -73,18 +82,17 @@ func (s Series) Max() float64                       { return Max(s) }
 func (s Series) Min() float64                       { return Min(s) }
 func (s Series) Mean() float64                      { return Mean(s) }
 func (s Series) Median() float64                    { return Median(s) }
-func (s Series) SVar() float64                      { return SVar(s) }
-func (s Series) PVar() float64                      { return PVar(s) }
-func (s Series) SStd() float64                      { return SStd(s) }
-func (s Series) PStd() float64                      { return PStd(s) }
-func (s Series) SSkew() float64                     { return SSkew(s) }
-func (s Series) PSkew() float64                     { return PSkew(s) }
+func (s Series) Var() float64                       { return Var(s) }
+func (s Series) VarP() float64                      { return VarP(s) }
+func (s Series) Std() float64                       { return Std(s) }
+func (s Series) StdP() float64                      { return StdP(s) }
+func (s Series) Skew() float64                      { return Skew(s) }
+func (s Series) SkewP() float64                     { return SkewP(s) }
 func (s Series) Autocov(lag int) float64            { return Autocov(s, lag) }
-func (s Series) Autocorr(lag int) float64           { return Autocorr(s, lag) }
-func (s Series) SCovar(t Series) float64            { return SCovar(s, t) }
-func (s Series) PCovar(t Series) float64            { return PCovar(s, t) }
-func (s Series) SCorr(t Series) float64             { return SCorr(s, t) }
-func (s Series) PCorr(t Series) float64             { return PCorr(s, t) }
+func (s Series) Autocor(lag int) float64            { return Autocor(s, lag) }
+func (s Series) Cov(t Series) float64               { return Cov(s, t) }
+func (s Series) CovP(t Series) float64              { return CovP(s, t) }
+func (s Series) Cor(t Series) float64               { return Cor(s, t) }
 func (s Series) Map(f func(float64) float64) Series { return Map(s, f) }
 func (s Series) Add1(f float64) Series              { return Add1(s, f) }
 func (s Series) Mul1(f float64) Series              { return Mul1(s, f) }
@@ -177,24 +185,24 @@ func Median(s Series) float64 {
 	t := s.Copy()
 	sort.Float64s(t)
 	if n%2 == 0 {
-		return (t[n/2] + t[n/2+1]) / 2
+		return (t[n/2] + t[n/2-1]) / 2.0
 	}
 	return t[n/2]
 }
 
-// SVar returns the sample variance of the series.
+// Var returns the sample variance of the series.
 //
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func SVar(s Series) float64 {
+func Var(s Series) float64 {
 	return variance(s, true)
 }
 
-// PVar returns the population variance of the series.
+// VarP returns the population variance of the series.
 //
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func PVar(s Series) float64 {
+func VarP(s Series) float64 {
 	return variance(s, false)
 }
 
@@ -215,42 +223,42 @@ func variance(xs Series, sample bool) float64 {
 	return s / float64(len(xs))
 }
 
-// SStd returns the sample standard deviation of the series.
+// Std returns the sample standard deviation of the series.
 //
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func SStd(s Series) float64 {
-	return math.Sqrt(SVar(s))
+func Std(s Series) float64 {
+	return math.Sqrt(Var(s))
 }
 
-// PStd returns the population standard deviation of the series.
+// StdP returns the population standard deviation of the series.
 //
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func PStd(s Series) float64 {
-	return math.Sqrt(PVar(s))
+func StdP(s Series) float64 {
+	return math.Sqrt(VarP(s))
 }
 
-// SSkew returns the sample skew of the series.
+// Skew returns the sample skew of the series.
 //
 // NOTE: Not implemented yet.
-func SSkew(s Series) float64 {
+func Skew(s Series) float64 {
 	panic("not implemented")
 }
 
-// PSkew returns the population skew of the series.
+// SkewP returns the population skew of the series.
 //
 // NOTE: Not implemented yet.
-func PSkew(s Series) float64 {
+func SkewP(s Series) float64 {
 	panic("not implemented")
 }
 
-// SCovar returns the sample covariance of two series s and t.
+// Cov returns the sample covariance of two series s and t.
 //
 // If the series do not have the same lengths, this function panics.
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func SCovar(s, t Series) float64 {
+func Cov(s, t Series) float64 {
 	n := len(s)
 	if n <= 1 {
 		return math.NaN()
@@ -260,12 +268,12 @@ func SCovar(s, t Series) float64 {
 	return Mean(u) * float64(n) / float64(n-1)
 }
 
-// PCovar returns the population covariance of two series s and t.
+// CovP returns the population covariance of two series s and t.
 //
 // If the series do not have the same lengths, this function panics.
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func PCovar(s, t Series) float64 {
+func CovP(s, t Series) float64 {
 	n := len(s)
 	if n <= 1 {
 		return math.NaN()
@@ -274,22 +282,16 @@ func PCovar(s, t Series) float64 {
 	return Mean(Mul(s, t)) - Mean(s)*Mean(t)
 }
 
-// SCorr returns the sample correlation of two series s and t.
+// Cor returns the sample correlation of two series s and t.
 //
 // If the series do not have the same lengths, this function panics.
 // If s is empty or has only one element, one cannot speak of variance,
 // and NaN is returned.
-func SCorr(s, t Series) float64 {
-	return SCovar(s, t) / math.Sqrt(SVar(s)*SVar(t))
-}
-
-// PCorr returns the poulation correlation of two series s and t.
 //
-// If the series do not have the same lengths, this function panics.
-// If s is empty or has only one element, one cannot speak of variance,
-// and NaN is returned.
-func PCorr(s, t Series) float64 {
-	return PCovar(s, t) / math.Sqrt(PVar(s)*PVar(t))
+// NOTE: This is the same as the population correlation of two series,
+// hence there is no CorP.
+func Cor(s, t Series) float64 {
+	return Cov(s, t) / math.Sqrt(Var(s)*Var(t))
 }
 
 // Autocov returns the sample covariance of s with itself lag values later.
@@ -299,17 +301,17 @@ func Autocov(s Series, lag int) float64 {
 	if lag > n-2 {
 		return math.NaN()
 	}
-	return SCovar(s[:n-lag], s[lag:])
+	return Cov(s[:n-lag], s[lag:])
 }
 
-// Autocorr returns the sample correlation of s with itself lag values later.
+// Autocor returns the sample correlation of s with itself lag values later.
 // The series s must be at least 2 longer than lag, else NaN is returned.
-func Autocorr(s Series, lag int) float64 {
+func Autocor(s Series, lag int) float64 {
 	n := len(s)
 	if lag > n-2 {
 		return math.NaN()
 	}
-	return SCorr(s[:n-lag], s[lag:])
+	return Cor(s[:n-lag], s[lag:])
 }
 
 // Add1 adds f to each value in s and returns a new series.
