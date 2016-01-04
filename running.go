@@ -2,14 +2,12 @@
 // Use of this source code is governed by an MIT license
 // that can be found in the LICENSE file.
 
-// +build ignore
-
 package stat
 
 import "math"
 
-// RunAll calculates the running means, variances, and standard deviation over time.
-type RunAll struct {
+// Running calculates the running means, variances, and standard deviation over time.
+type Running struct {
 	z Run
 
 	ts []Time
@@ -20,35 +18,26 @@ type RunAll struct {
 // I don't want to take along the baggage of a time.Time.
 type Time uint64
 
-func (r *RunningMVS) Add(t Time, x float64) {
+func (r *Running) Add(t Time, x float64) {
 	r.z.Add(x)
 	r.ts = append(r.ts, t)
 	r.ms.Append(r.z.m)
 	r.ss.Append(r.z.s)
 }
 
-func (r RunningMVS) Times() []Time {
+func (r Running) Times() []Time {
 	ts := make([]Time, len(r.ts))
 	copy(ts, r.ts)
 	return ts
 }
 
-func (r RunningMVS) Means() Series {
+func (r Running) Means() Series {
 	ms := make(Series, len(r.ms))
 	copy(ms, r.ms)
 	return ms
 }
 
-func (r RunningMVS) PVars() Series {
-	ss := make(Series, len(r.ss))
-	n := float64(r.z.n)
-	for i, m := range r.ss {
-		ss[i] = m / n
-	}
-	return ss
-}
-
-func (r RunningMVS) SVars() Series {
+func (r Running) Vars() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n - 1)
 	for i, m := range r.ss {
@@ -57,18 +46,27 @@ func (r RunningMVS) SVars() Series {
 	return ss
 }
 
-func (r RunningMVS) PStds() Series {
+func (r Running) VarsP() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n)
+	for i, m := range r.ss {
+		ss[i] = m / n
+	}
+	return ss
+}
+
+func (r Running) Stds() Series {
+	ss := make(Series, len(r.ss))
+	n := float64(r.z.n - 1)
 	for i, m := range r.ss {
 		ss[i] = math.Sqrt(m / n)
 	}
 	return ss
 }
 
-func (r RunningMVS) SStds() Series {
+func (r Running) StdsP() Series {
 	ss := make(Series, len(r.ss))
-	n := float64(r.z.n - 1)
+	n := float64(r.z.n)
 	for i, m := range r.ss {
 		ss[i] = math.Sqrt(m / n)
 	}

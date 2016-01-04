@@ -72,42 +72,32 @@ func (r *Run) AddN(n int64, x float64) {
 }
 
 // Max returns the max.
-func (r Run) Max() float64 {
-	return r.max
-}
+func (r Run) Max() float64 { return r.max }
 
 // Min returns the min.
-func (r Run) Min() float64 {
-	return r.min
-}
+func (r Run) Min() float64 { return r.min }
 
 // Mean returns the mean.
-func (r Run) Mean() float64 {
-	return r.m
-}
+func (r Run) Mean() float64 { return r.m }
 
-// PVar returns the population variance.
-func (r Run) PVar() float64 {
-	if r.n <= 1 {
-		return 0
-	}
-	return r.s / float64(r.n)
-}
-
-// SVar returns the sample variance.
-func (r Run) SVar() float64 {
+// Var returns the sample variance.
+func (r Run) Var() float64 {
 	if r.n <= 1 {
 		return 0
 	}
 	return r.s / float64(r.n-1)
 }
 
-// PStd returns the population standard deviation.
-func (r Run) PStd() float64 {
-	return math.Sqrt(r.PVar())
+// VarP returns the population variance.
+func (r Run) VarP() float64 {
+	if r.n <= 1 {
+		return 0
+	}
+	return r.s / float64(r.n)
 }
 
-// SStd returns the sample standard deviation.
-func (r Run) SStd() float64 {
-	return math.Sqrt(r.SVar())
-}
+// Std returns the sample standard deviation.
+func (r Run) Std() float64 { return math.Sqrt(r.Var()) }
+
+// StdP returns the population standard deviation.
+func (r Run) StdP() float64 { return math.Sqrt(r.VarP()) }
