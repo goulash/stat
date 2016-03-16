@@ -15,8 +15,8 @@ type HyperExponential struct {
 	lambdas []float64
 }
 
-func NewHyperExponential(lambda []float64, s rand.Source) *HyperExponential {
-	return nil
+func NewHyperExponential(s rand.Source, lambda []float64) *HyperExponential {
+	panic("not implemented")
 }
 
 func (e HyperExponential) String() string {
