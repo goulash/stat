@@ -101,9 +101,8 @@ func (s Stairs) Q(p float64) (x float64) {
 
 func (s Stairs) Mean() float64 {
 	mean := 0.0
-	n := float64(len(s.p))
 	for i, p := range s.p[1:] {
-		mean += float64(i+1) * (p - s.p[i]) / n
+		mean += float64(i+1) * (p - s.p[i])
 	}
 	return mean
 }
