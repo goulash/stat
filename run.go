@@ -9,6 +9,9 @@ import "math"
 // Run calculates the running mean, variance, and standard deviation.
 //
 // The zero value can be used.
+//
+// Note: Run contains only plain old datatypes, so a shallow copy is
+// a complete copy.
 type Run struct {
 	n int64
 	m float64
