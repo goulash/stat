@@ -5,6 +5,7 @@
 package stat
 
 import (
+	"math"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,12 @@ import (
 
 func TestRunSeries(z *testing.T) {
 	assert := assert.New(z)
+	var assertFloat = func(a, b float64) {
+		if math.IsNaN(a) && math.IsNaN(b) {
+			return // ok
+		}
+		assert.Equal(a, b)
+	}
 
 	tests := []Series{
 		{1, 2, 3, 4, 5},
@@ -19,6 +26,7 @@ func TestRunSeries(z *testing.T) {
 		{0.32123922, 0.57085251, 0.53576882, 0.38965630, 0.27487263, 0.90783122},
 		{0, 0, 0, 0, 0},
 		{-1, -2, -3},
+		{},
 	}
 
 	for _, t := range tests {
@@ -27,12 +35,12 @@ func TestRunSeries(z *testing.T) {
 			r.Add(f)
 		}
 
-		assert.Equal(t.Min(), r.Min())
-		assert.Equal(t.Max(), r.Max())
-		assert.Equal(t.Mean(), r.Mean())
-		assert.Equal(t.Var(), r.Var())
-		assert.Equal(t.Std(), r.Std())
-		assert.Equal(t.VarP(), r.VarP())
-		assert.Equal(t.StdP(), r.StdP())
+		assertFloat(t.Min(), r.Min())
+		assertFloat(t.Max(), r.Max())
+		assertFloat(t.Mean(), r.Mean())
+		assertFloat(t.Var(), r.Var())
+		assertFloat(t.Std(), r.Std())
+		assertFloat(t.VarP(), r.VarP())
+		assertFloat(t.StdP(), r.StdP())
 	}
 }

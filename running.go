@@ -25,19 +25,19 @@ func (r *Running) Add(t Time, x float64) {
 	r.ss.Append(r.z.s)
 }
 
-func (r Running) Times() []Time {
+func (r *Running) Times() []Time {
 	ts := make([]Time, len(r.ts))
 	copy(ts, r.ts)
 	return ts
 }
 
-func (r Running) Means() Series {
+func (r *Running) Means() Series {
 	ms := make(Series, len(r.ms))
 	copy(ms, r.ms)
 	return ms
 }
 
-func (r Running) Vars() Series {
+func (r *Running) Vars() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n - 1)
 	for i, m := range r.ss {
@@ -46,7 +46,7 @@ func (r Running) Vars() Series {
 	return ss
 }
 
-func (r Running) VarsP() Series {
+func (r *Running) VarsP() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n)
 	for i, m := range r.ss {
@@ -55,7 +55,7 @@ func (r Running) VarsP() Series {
 	return ss
 }
 
-func (r Running) Stds() Series {
+func (r *Running) Stds() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n - 1)
 	for i, m := range r.ss {
@@ -64,7 +64,7 @@ func (r Running) Stds() Series {
 	return ss
 }
 
-func (r Running) StdsP() Series {
+func (r *Running) StdsP() Series {
 	ss := make(Series, len(r.ss))
 	n := float64(r.z.n)
 	for i, m := range r.ss {
