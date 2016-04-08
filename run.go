@@ -8,7 +8,8 @@ import "math"
 
 // Run calculates the running mean, variance, and standard deviation.
 //
-// The zero value can be used.
+// The zero value can be used, if you're fine with max and min being
+// the same as zero. Otherwise, call Run.Reset() first.
 //
 // Note: Run contains only plain old datatypes, so a shallow copy is
 // a complete copy.
