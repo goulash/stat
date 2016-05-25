@@ -24,16 +24,16 @@ func NewNormal(s rand.Source, mean, std float64) *Normal {
 	return &Normal{rand.New(s), mean, std}
 }
 
-func (n Normal) String() string {
+func (n *Normal) String() string {
 	return fmt.Sprintf("normal [μ=%f σ=%f]", n.mean, n.std)
 }
 
-func (n Normal) Float64() float64 {
+func (n *Normal) Float64() float64 {
 	return n.r.NormFloat64()*n.std + n.mean
 }
 
-func (n Normal) Mean() float64 { return n.mean }
-func (n Normal) Var() float64  { return n.std * n.std }
-func (n Normal) Std() float64  { return n.std }
+func (n *Normal) Mean() float64 { return n.mean }
+func (n *Normal) Var() float64  { return n.std * n.std }
+func (n *Normal) Std() float64  { return n.std }
 
-func (n Normal) Z(x float64) float64 { return (x - n.mean) / n.std }
+func (n *Normal) Z(x float64) float64 { return (x - n.mean) / n.std }

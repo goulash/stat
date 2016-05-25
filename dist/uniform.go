@@ -25,16 +25,16 @@ func NewUniform(s rand.Source, a, b float64) *Uniform {
 	return &Uniform{rand.New(s), a, b}
 }
 
-func (u Uniform) String() string {
+func (u *Uniform) String() string {
 	return fmt.Sprintf("uniform [%v %v]", u.a, u.b)
 }
 
-func (u Uniform) Float64() float64 {
+func (u *Uniform) Float64() float64 {
 	// Inversion method works here.
 	return u.Q(u.r.Float64())
 }
 
-func (u Uniform) P(x float64) (p float64) {
+func (u *Uniform) P(x float64) (p float64) {
 	if x < u.a {
 		return 0
 	} else if x > u.b {
@@ -43,7 +43,7 @@ func (u Uniform) P(x float64) (p float64) {
 	return (x - u.a) / (u.b - u.a)
 }
 
-func (u Uniform) Q(p float64) (x float64) {
+func (u *Uniform) Q(p float64) (x float64) {
 	if p < 0 {
 		return u.a
 	} else if p > 1 {
@@ -52,6 +52,6 @@ func (u Uniform) Q(p float64) (x float64) {
 	return p*(u.b-u.a) + u.a
 }
 
-func (u Uniform) Mean() float64 {
+func (u *Uniform) Mean() float64 {
 	return u.Q(0.5)
 }

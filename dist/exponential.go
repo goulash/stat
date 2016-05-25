@@ -24,15 +24,15 @@ func NewExponential(s rand.Source, lambda float64) *Exponential {
 	return &Exponential{rand.New(s), lambda}
 }
 
-func (e Exponential) String() string {
+func (e *Exponential) String() string {
 	return fmt.Sprintf("exponential [%v]", e.lambda)
 }
 
-func (e Exponential) Float64() float64 {
+func (e *Exponential) Float64() float64 {
 	return e.r.ExpFloat64() / e.lambda
 }
 
-func (e Exponential) P(x float64) float64 {
+func (e *Exponential) P(x float64) float64 {
 	if x < 0 {
 		return 0
 	}
@@ -40,7 +40,7 @@ func (e Exponential) P(x float64) float64 {
 	return 1 - math.Exp(-e.lambda*x)
 }
 
-func (e Exponential) Q(p float64) float64 {
+func (e *Exponential) Q(p float64) float64 {
 	if p < 0 {
 		return 0
 	} else if p == 1 {
@@ -50,6 +50,6 @@ func (e Exponential) Q(p float64) float64 {
 	return -math.Log(1-p) / e.lambda
 }
 
-func (e Exponential) Mean() float64 {
+func (e *Exponential) Mean() float64 {
 	return 1 / e.lambda
 }

@@ -64,11 +64,11 @@ func NewStairs(s rand.Source, p ...float64) *Stairs {
 	}
 }
 
-func (s Stairs) String() string {
+func (s *Stairs) String() string {
 	return fmt.Sprintf("discrete stairs %v", s.p)
 }
 
-func (s Stairs) Int63() int64 {
+func (s *Stairs) Int63() int64 {
 	p := s.r.Float64()
 	for i, r := range s.p {
 		if r > p {
@@ -78,14 +78,14 @@ func (s Stairs) Int63() int64 {
 	return s.z
 }
 
-func (s Stairs) P(x int64) (p float64) {
+func (s *Stairs) P(x int64) (p float64) {
 	if x < 0 || x > s.z {
 		return 0.0
 	}
 	return s.p[x] - s.p[x-1]
 }
 
-func (s Stairs) Q(p float64) (x float64) {
+func (s *Stairs) Q(p float64) (x float64) {
 	if p < 0.0 {
 		return 0.0
 	} else if p >= 1.0 {
@@ -99,8 +99,8 @@ func (s Stairs) Q(p float64) (x float64) {
 	return float64(s.z)
 }
 
-func (s Stairs) Mean() float64 {
-	mean := 0.0
+func (s *Stairs) Mean() float64 {
+	var mean float64
 	for i, p := range s.p[1:] {
 		mean += float64(i+1) * (p - s.p[i])
 	}

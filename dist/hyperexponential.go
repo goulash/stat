@@ -12,19 +12,46 @@ import (
 // HyperExponential distribution with k rates of arrival. {{{
 type HyperExponential struct {
 	r       *rand.Rand
+	stairs  *Stairs
 	lambdas []float64
 }
 
-func NewHyperExponential(s rand.Source, lambda []float64) *HyperExponential {
-	panic("not implemented")
+func NewHyperExponential(s rand.Source, probs, lambdas []float64) *HyperExponential {
+	if s == nil {
+		panic("random source cannot be zero")
+	}
+	if len(probs) != len(lambdas) {
+		panic("list of probabilities must have same length as lambdas")
+	}
+	for _, l := range lambdas {
+		if l <= 0 {
+			panic("lambda must be positive")
+		}
+	}
+
+	stairs := NewStairs(s, probs...)
+	return &HyperExponential{
+		r:       stairs.r,
+		stairs:  stairs,
+		lambdas: lambdas,
+	}
 }
 
-func (e HyperExponential) String() string {
+func (e *HyperExponential) String() string {
 	return fmt.Sprintf("hyper-exponential %v", e.lambdas)
 }
 
-func (e HyperExponential) Float64() float64 {
-	panic("implement me!")
+func (e *HyperExponential) Float64() float64 {
+	return e.r.ExpFloat64() / e.lambdas[e.stairs.Int63()]
+}
+
+func (e *HyperExponential) Mean() float64 {
+	var mean, prev float64
+	for i, p := range e.stairs.p {
+		mean += e.lambdas[i] * (p - prev)
+		prev = p
+	}
+	return mean
 }
 
 // }}}
