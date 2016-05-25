@@ -48,10 +48,24 @@ func (e *HyperExponential) Float64() float64 {
 func (e *HyperExponential) Mean() float64 {
 	var mean, prev float64
 	for i, p := range e.stairs.p {
-		mean += e.lambdas[i] * (p - prev)
+		mean += (p - prev) / e.lambdas[i]
 		prev = p
 	}
 	return mean
+}
+
+func (e *HyperExponential) SecondMoment() float64 {
+	var mean, prev float64
+	for i, p := range e.stairs.p {
+		mean += (2 * (p - prev)) / (e.lambdas[i] * e.lambdas[i])
+		prev = p
+	}
+	return mean
+
+}
+
+func (e *HyperExponential) Var() float64 {
+	return e.SecondMoment() - (e.Mean() * e.Mean())
 }
 
 // }}}
