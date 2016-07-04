@@ -9,7 +9,7 @@ import (
 	"math/rand"
 )
 
-// HyperExponential distribution with k rates of arrival. {{{
+// HyperExponential distribution with k rates of arrival.
 type HyperExponential struct {
 	r       *rand.Rand
 	stairs  *Stairs
@@ -67,5 +67,3 @@ func (e *HyperExponential) SecondMoment() float64 {
 func (e *HyperExponential) Var() float64 {
 	return e.SecondMoment() - (e.Mean() * e.Mean())
 }
-
-// }}}
