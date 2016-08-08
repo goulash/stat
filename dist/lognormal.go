@@ -11,6 +11,10 @@ import (
 )
 
 // LogNormal distribution with mean and standard deviation.
+//
+// See:
+//  http://stackoverflow.com/questions/23699738
+//  http://blogs.sas.com/content/iml/2014/06/04/simulate-lognormal-data-with-specified-mean-and-variance.html
 type LogNormal struct {
 	r    *rand.Rand
 	mean float64
